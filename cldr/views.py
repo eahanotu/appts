@@ -14,7 +14,8 @@ def index(request):
         if form.is_valid():
             new = Appts(date=request.POST['date'], time=request.POST['time'], description=request.POST['desc'])
             new.save()
-    else:    
+            form = ApptForm() 
+    else:
         form = ApptForm()
     #qs = Appts.objects.all()
     return render(request, 'index.html', {'form':form})
