@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Calendar</title>
+        <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="  crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        {% csrf_token %}
+        <script>
+            var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            function getAppointments(search){  
+                $.post("getAppts/", {"search":search}, function(data){
+                    alert(data);
+                    var rsltable = "<table class='table-striped'><tr><th>Date</th><th>Time</th><th>Description</th></tr></table>";
+                    $.each(data, function(i,item){
+                        
+                    });
+                    $("div#results").append(rsltable);
+                }, "json")
+            }
+
+            $(document).ready(function(){
+                getAppointments();
+                $("input[name='search']").click(function(){
+                    var kw = $("input[name='search']").val();
+                    getAppointments(kw);
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div id="form_new1" class="m-3 multi-collapse show">
+            <button name="new" data-toggle="collapse" href=".multi-collapse" class="btn btn-outline-primary">NEW</button>
+        </div>
+        <div id="form_add1" class="collapse multi-collapse m-3 form-group">
+            <form action="" method="POST" name="add">
+                <button name="add" type="submit" class="btn btn-outline-secondary">Add</button>
+                &nbsp;&nbsp;
+                <button name="cancel" type="reset" data-toggle="collapse" href=".multi-collapse" class="btn btn-outline-secondary">Cancel</button><br>
+                <table class="mt-3 mb-3"><tbody>
+                    {{form.as_table}}
+                </tbody></table>
+            </form>
+        </div>
+        <div id="search" class="m-3">
+            <table><tbody>
+                <tr><td><input type="search" name="search" class="form-control"></td><td><button name="search" class="btn btn-outline-primary">SEARCH</button></td></tr>
+            </tbody></table>
+        </div>
+        <div id="results" class="m-3"></div>
+    </body>
+</html>
