@@ -6,8 +6,6 @@ from django.http import HttpResponse
 from .models import Appts
 from .forms import ApptForm
 from django.core import serializers
-from pprint import pprint
-import json
 
 
 def index(request):
@@ -27,11 +25,6 @@ def getAppts(request):
     else:
         qs = Appts.objects.filter(description = request.POST['search'])
     
-    data = serializers.serialize("json", list(qs))
-    #dump ={}
-    #for s in qs:
-     #   print(s.description)
-
-    return HttpResponse(data)
-    #return HttpResponse(json.dumps(data), content_type='application/json')
-    #return HttpResponse(data, content_type='application/json')
+    data = serializers.serialize("json", qs)
+    
+    return HttpResponse(data, content_type='application/json')
